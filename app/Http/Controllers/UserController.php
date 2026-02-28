@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
 use App\Models\User;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Exception;
 
 class UserController extends Controller
 {
@@ -24,5 +27,33 @@ class UserController extends Controller
             'status' => true,
             'user' => $user,
         ], 200);
+    }
+
+    public function store(UserRequest $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => $request->password,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User successfully registered',
+                'user' => $user,
+            ], 201);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to register user',
+            ], 400);
+        }
     }
 }
