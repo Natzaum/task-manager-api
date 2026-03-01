@@ -13,7 +13,7 @@ class UserController extends Controller
 {
     public function index(): JsonResponse
     {
-        $users = User::orderBy('id', 'DESC')->paginate(2);
+        $users = User::orderBy('id', 'DESC')->paginate(10);
 
         return response()->json([
             'status' => true,
@@ -29,7 +29,7 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function store(UserRequest $request)
+    public function store(UserRequest $request): JsonResponse
     {
         DB::beginTransaction();
 
@@ -53,6 +53,35 @@ class UserController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to register user',
+            ], 400);
+        }
+    }
+
+    public function update(UserRequest $request, User $user): JsonResponse
+    {
+        DB::beginTransaction();
+
+        try {
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => $request->password,
+            ]);
+        
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User edited successfully',
+                'user' => $user,
+            ], 200);
+
+        } catch(Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to edit user',
             ], 400);
         }
     }
