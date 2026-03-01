@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\User;
 use Exception;
 
 class AuthController extends Controller
@@ -24,19 +23,20 @@ class AuthController extends Controller
                 'status' => true,
                 'token' => $token,
                 'message' => 'Login successfully',
+                'user' => $user,
             ], 200);
         } else {
             return response()->json([
                 'status' => false,
                 'message' => 'Incorrect credentials'
-            ], 404);
+            ], 401);
         }
     }
 
-    public function logout(User $user): JsonResponse
+    public function logout(Request $request): JsonResponse
     {   
         try {
-            $user->tokens()->delete();
+            $request->user()->tokens()->delete();
 
             return response()->json([
                 'status' => true,

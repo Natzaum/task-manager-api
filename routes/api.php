@@ -15,5 +15,5 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::put('/users/{user}', [UserController::class, 'update']); # http://127.0.0.1:8000/api/users/{id}
     Route::delete('/users/{user}', [UserController::class, 'destroy']); # http://127.0.0.1:8000/api/users/{id}
 
-    Route::post('/logout/{user}', [AuthController::class, 'logout']); # http://127.0.0.1:8000/api/logout/{id}
+    Route::post('/logout', [AuthController::class, 'logout']); # http://127.0.0.1:8000/api/logout/{id}
 });
