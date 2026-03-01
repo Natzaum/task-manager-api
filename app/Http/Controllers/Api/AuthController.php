@@ -49,4 +49,14 @@ class AuthController extends Controller
             ], 400);
         }
     }
+    
+    public function authUser(): JsonResponse 
+    {
+        $user = Auth::user();
+
+        return response()->json([
+            'status' => true,
+            'user' => $user,
+        ]);
+    }
 }

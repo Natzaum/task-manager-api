@@ -10,6 +10,8 @@ Route::post('/login', [AuthController::class, 'login']); # http://127.0.0.1:8000
 
 # Restricted routes
 Route::group(['middleware' => ['auth:sanctum']], function(){
+    # Users
+    Route::get('/user', [AuthController::class, 'authUser']);
     Route::get('/users', [UserController::class, 'index']); # http://127.0.0.1:8000/api/users?page={page}
     Route::get('/users/{user}', [UserController::class, 'show']); # http://127.0.0.1:8000/api/users/{id}
     Route::put('/users/{user}', [UserController::class, 'update']); # http://127.0.0.1:8000/api/users/{id}
