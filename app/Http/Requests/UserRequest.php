@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
@@ -23,9 +24,16 @@ class UserRequest extends FormRequest
 
     public function rules(): array
     {
+        $user_id = $this->route('user');
+
         return [
             'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users, email',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($user_id)
+            ],
             'password' => 'required|min:6',
         ];
     }
@@ -38,6 +46,7 @@ class UserRequest extends FormRequest
             'email.required' => 'Field email is required',
             'email.email' => 'Field email must be an email',
             'email.max' => 'Field email cannot have more than 255 characters',
+            'email.unique' => 'This email is already registered',
             'password.required' => 'Field password is required',
             'password.min' => 'Field password must have more than 6 characters',
         ];

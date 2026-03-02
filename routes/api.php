@@ -5,17 +5,20 @@ use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 # Public routes
-Route::post('/users', [UserController::class, 'store']); # http://127.0.0.1:8000/api/users
-Route::post('/login', [AuthController::class, 'login']); # http://127.0.0.1:8000/api/login
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-# Restricted routes
-Route::group(['middleware' => ['auth:sanctum']], function(){
-    # Users
+# Restricted routes users
+Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/user', [AuthController::class, 'authUser']);
-    Route::get('/users', [UserController::class, 'index']); # http://127.0.0.1:8000/api/users?page={page}
-    Route::get('/users/{user}', [UserController::class, 'show']); # http://127.0.0.1:8000/api/users/{id}
-    Route::put('/users/{user}', [UserController::class, 'update']); # http://127.0.0.1:8000/api/users/{id}
-    Route::delete('/users/{user}', [UserController::class, 'destroy']); # http://127.0.0.1:8000/api/users/{id}
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
 
-    Route::post('/logout', [AuthController::class, 'logout']); # http://127.0.0.1:8000/api/logout/{id}
+# Restricted routes admins
+Route::group(['middleware' => ['auth:sanctum', 'is.admin']], function(){
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
 });
